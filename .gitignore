@@ -1,0 +1,5 @@
+node_modules/
+Credentials.h
+dist/
+*.bin
+

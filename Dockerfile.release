@@ -1,0 +1,12 @@
+FROM node:8
+
+RUN apt-get update \
+    && apt-get install -y git-core \
+    && apt-get clean
+
+RUN git config --global user.email 'jenkins@leveugle.net'
+RUN git config --global user.name 'Jenkins'
+
+RUN mkdir /root/.ssh && echo "StrictHostKeyChecking no" > /root/.ssh/config
+
+WORKDIR /usr/src/app

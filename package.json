@@ -1,0 +1,14 @@
+{
+  "name": "nespresso",
+  "version": "0.1.0",
+  "description": "",
+  "devDependencies": {
+    "standard-version": "^4.2.0"
+  },
+  "scripts": {
+    "pre-release": "standard-version --skip.commit=true --skip.tag=true",
+    "release": "standard-version -a --skip.bump=true --skip.changelog=true"
+  },
+  "author": "Antoine Leveugle",
+  "license": "ISC"
+}
