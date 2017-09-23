@@ -17,30 +17,30 @@ const char* www_username = "denouche";
 const char* www_password = "denouche";
 
 // Put here the fingerprint of above domain name HTTPS certificate
-// iot.leveugle.net TLS SHA-1 fingerprint, expire on 2017-10-04
-String API_HTTPS_FINGERPRINT = "BB 13 89 F4 B0 82 3F 1D 90 CE 92 FD E6 98 9C 14 94 C3 6A CA";
+// iot.leveugle.net TLS SHA-1 fingerprint, issued on 2017-09-05
+String API_HTTPS_FINGERPRINT = "B9 8C A0 87 A8 94 C0 11 C6 45 53 30 8D F8 44 48 DA 60 08 C5";
 
 ESP8266WebServer server(80);
 
 // Declare pin number here
-const int GPIO_PIN_4_LONG = 4;
-const int GPIO_PIN_5_SHORT = 5;
+const int GPIO_PIN_14_LONG = 14;
+const int GPIO_PIN_12_SHORT = 12;
 
 byte mac[6];
 
 void turnOnAndWait() {
-    digitalWrite(GPIO_PIN_5_SHORT, HIGH);
+    digitalWrite(GPIO_PIN_12_SHORT, HIGH);
     delay(200);
-    digitalWrite(GPIO_PIN_5_SHORT, LOW);
+    digitalWrite(GPIO_PIN_12_SHORT, LOW);
     delay(30000); // wait for 30 seconds until the machine is ready
 }
 
 void turnOff() {
-    digitalWrite(GPIO_PIN_5_SHORT, HIGH);
-    digitalWrite(GPIO_PIN_4_LONG, HIGH);
+    digitalWrite(GPIO_PIN_12_SHORT, HIGH);
+    digitalWrite(GPIO_PIN_14_LONG, HIGH);
     delay(200);
-    digitalWrite(GPIO_PIN_5_SHORT, LOW);
-    digitalWrite(GPIO_PIN_4_LONG, LOW);
+    digitalWrite(GPIO_PIN_12_SHORT, LOW);
+    digitalWrite(GPIO_PIN_14_LONG, LOW);
 }
 
 void handleCoffeeLong() {
@@ -51,9 +51,9 @@ void handleCoffeeLong() {
 
     turnOnAndWait();
     
-    digitalWrite(GPIO_PIN_4_LONG, HIGH);
+    digitalWrite(GPIO_PIN_14_LONG, HIGH);
     delay(200);
-    digitalWrite(GPIO_PIN_4_LONG, LOW);
+    digitalWrite(GPIO_PIN_14_LONG, LOW);
 
     delay(60000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
     turnOff();
@@ -67,9 +67,9 @@ void handleCoffeeShort() {
 
     turnOnAndWait();
     
-    digitalWrite(GPIO_PIN_5_SHORT, HIGH);
+    digitalWrite(GPIO_PIN_12_SHORT, HIGH);
     delay(200);
-    digitalWrite(GPIO_PIN_5_SHORT, LOW);
+    digitalWrite(GPIO_PIN_12_SHORT, LOW);
 
     delay(60000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
     turnOff();
@@ -92,7 +92,7 @@ void handleInfo() {
 
 void update() {
     String macString = String(mac[0], HEX) + ":" + String(mac[1], HEX) + ":" + String(mac[2], HEX) + ":" + String(mac[3], HEX) + ":" + String(mac[4], HEX) + ":" + String(mac[5], HEX);
-    t_httpUpdate_return ret = ESPhttpUpdate.update("iot.leveugle.net", 80, "/api/download?mac=" + macString);
+    t_httpUpdate_return ret = ESPhttpUpdate.update(API_HOSTNAME, 80, API_BASE_URL + "/download?mac=" + macString);
     Serial.println(ret);
     switch(ret) {
         case HTTP_UPDATE_FAILED:
@@ -120,7 +120,7 @@ void handleDisconnect() {
 }
 
 String getInformations() {
-    const size_t bufferSize = JSON_OBJECT_SIZE(5) + 200;
+    const size_t bufferSize = JSON_OBJECT_SIZE(6) + 250;
     DynamicJsonBuffer jsonBuffer(bufferSize);
     JsonObject& root = jsonBuffer.createObject();
 
@@ -140,7 +140,7 @@ void informConnexionDone() {
     String jsonString = getInformations();
 
     HTTPClient http;
-    http.begin(API_BASE_URL + "/devices/register", API_HTTPS_FINGERPRINT);
+    http.begin(API_PROTOCOL + API_HOSTNAME + API_BASE_URL + "/devices/register", API_HTTPS_FINGERPRINT);
     http.addHeader("Authorization", API_AUTHORIZATION);
     http.addHeader("Content-Type", "application/json");
 
@@ -153,11 +153,11 @@ void setup ( void ) {
     Serial.println("setup - begin");
 
     // init pin state here
-    pinMode(GPIO_PIN_4_LONG, OUTPUT);
-    digitalWrite(GPIO_PIN_4_LONG, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
+    pinMode(GPIO_PIN_14_LONG, OUTPUT);
+    digitalWrite(GPIO_PIN_14_LONG, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
 
-    pinMode(GPIO_PIN_5_SHORT, OUTPUT);
-    digitalWrite(GPIO_PIN_5_SHORT, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
+    pinMode(GPIO_PIN_12_SHORT, OUTPUT);
+    digitalWrite(GPIO_PIN_12_SHORT, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
 
     WiFiManager wifiManager;
     wifiManager.autoConnect("AutoConnectAP");
