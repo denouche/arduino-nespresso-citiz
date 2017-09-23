@@ -16,6 +16,6 @@ updateVersion:
 	sed -i -r 's/(const char\* software_version = ")[^"]+(";$$)/\1'$(VERSION)'\2/' $(SRC_FILE)
 
 build: updateVersion
-	arduino --board esp8266:esp8266:generic:CpuFrequency=80,UploadSpeed=115200,FlashFreq=40,FlashSize=4M3M --pref build.path=$$PWD/$(DIST_FOLDER) --verify $(SRC_FILE)
+	arduino --board esp8266:esp8266:generic:CpuFrequency=80,UploadSpeed=115200,FlashFreq=40,FlashSize=4M3M,FlashMode=dio,ResetMethod=ck,Debug=Disabled,DebugLevel=None____ --pref build.path=$$PWD/$(DIST_FOLDER) --verify $(SRC_FILE)
 
 
