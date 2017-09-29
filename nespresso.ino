@@ -11,7 +11,7 @@
 #include "Credentials.h"
 
 const char* software_name = "nespresso";
-const char* software_version = "0.1.2";
+const char* software_version = "0.1.6";
 
 const char* www_username = "denouche";
 const char* www_password = "denouche";
@@ -23,24 +23,24 @@ String API_HTTPS_FINGERPRINT = "B9 8C A0 87 A8 94 C0 11 C6 45 53 30 8D F8 44 48 
 ESP8266WebServer server(80);
 
 // Declare pin number here
-const int GPIO_PIN_14_LONG = 14;
+const int GPIO_PIN_5_LONG = 5;
 const int GPIO_PIN_12_SHORT = 12;
 
 byte mac[6];
 
 void turnOnAndWait() {
     digitalWrite(GPIO_PIN_12_SHORT, HIGH);
-    delay(200);
+    delay(300);
     digitalWrite(GPIO_PIN_12_SHORT, LOW);
     delay(30000); // wait for 30 seconds until the machine is ready
 }
 
 void turnOff() {
     digitalWrite(GPIO_PIN_12_SHORT, HIGH);
-    digitalWrite(GPIO_PIN_14_LONG, HIGH);
-    delay(200);
+    digitalWrite(GPIO_PIN_5_LONG, HIGH);
+    delay(500);
     digitalWrite(GPIO_PIN_12_SHORT, LOW);
-    digitalWrite(GPIO_PIN_14_LONG, LOW);
+    digitalWrite(GPIO_PIN_5_LONG, LOW);
 }
 
 void handleCoffeeLong() {
@@ -50,12 +50,12 @@ void handleCoffeeLong() {
     server.send(204);
 
     turnOnAndWait();
-    
-    digitalWrite(GPIO_PIN_14_LONG, HIGH);
-    delay(200);
-    digitalWrite(GPIO_PIN_14_LONG, LOW);
 
-    delay(60000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
+    digitalWrite(GPIO_PIN_5_LONG, HIGH);
+    delay(300);
+    digitalWrite(GPIO_PIN_5_LONG, LOW);
+
+    delay(120000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
     turnOff();
 }
 
@@ -66,12 +66,12 @@ void handleCoffeeShort() {
     server.send(204);
 
     turnOnAndWait();
-    
+
     digitalWrite(GPIO_PIN_12_SHORT, HIGH);
-    delay(200);
+    delay(300);
     digitalWrite(GPIO_PIN_12_SHORT, LOW);
 
-    delay(60000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
+    delay(90000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
     turnOff();
 }
 
@@ -153,8 +153,8 @@ void setup ( void ) {
     Serial.println("setup - begin");
 
     // init pin state here
-    pinMode(GPIO_PIN_14_LONG, OUTPUT);
-    digitalWrite(GPIO_PIN_14_LONG, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
+    pinMode(GPIO_PIN_5_LONG, OUTPUT);
+    digitalWrite(GPIO_PIN_5_LONG, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
 
     pinMode(GPIO_PIN_12_SHORT, OUTPUT);
     digitalWrite(GPIO_PIN_12_SHORT, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.

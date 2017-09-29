@@ -1,6 +1,6 @@
 {
   "name": "nespresso",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "description": "",
   "devDependencies": {
     "standard-version": "^4.2.0"
