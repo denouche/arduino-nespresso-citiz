@@ -27,6 +27,7 @@ const int GPIO_PIN_5_LONG = 5;
 const int GPIO_PIN_12_SHORT = 12;
 
 byte mac[6];
+boolean locked = false;
 
 void turnOnAndWait() {
     digitalWrite(GPIO_PIN_12_SHORT, HIGH);
@@ -47,32 +48,48 @@ void handleCoffeeLong() {
     if(!server.authenticate(www_username, www_password)) {
         return server.requestAuthentication();
     }
-    server.send(204);
 
-    turnOnAndWait();
+    if(locked) {
+      server.send(409);
+    }
+    else {
+      locked = true;
+      server.send(204);
 
-    digitalWrite(GPIO_PIN_5_LONG, HIGH);
-    delay(300);
-    digitalWrite(GPIO_PIN_5_LONG, LOW);
+      turnOnAndWait();
 
-    delay(120000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
-    turnOff();
+      digitalWrite(GPIO_PIN_5_LONG, HIGH);
+      delay(300);
+      digitalWrite(GPIO_PIN_5_LONG, LOW);
+
+      delay(120000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
+      turnOff();
+      locked = false;
+    }
 }
 
 void handleCoffeeShort() {
     if(!server.authenticate(www_username, www_password)) {
         return server.requestAuthentication();
     }
-    server.send(204);
 
-    turnOnAndWait();
+    if(locked) {
+      server.send(409);
+    }
+    else {
+      locked = true;
+      server.send(204);
 
-    digitalWrite(GPIO_PIN_12_SHORT, HIGH);
-    delay(300);
-    digitalWrite(GPIO_PIN_12_SHORT, LOW);
+      turnOnAndWait();
 
-    delay(90000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
-    turnOff();
+      digitalWrite(GPIO_PIN_12_SHORT, HIGH);
+      delay(300);
+      digitalWrite(GPIO_PIN_12_SHORT, LOW);
+
+      delay(90000); // TODO vérifier le temps nécéssaire pour faire un café, au maximum
+      turnOff();
+      locked = false;
+    }
 }
 
 void handleNotFound() {
